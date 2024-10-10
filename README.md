@@ -135,7 +135,59 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo mkfs.xfs /dev/webdata-vg/lv-opt
     ```
 
-18. Create mount points on /mnt directory for the logical volumes as follows: Mount lv-apps on /mnt/apps - To be used by webservers Mount lv-logs on /mnt/logs - To be used by webserver logs Mount lv-opt on /mnt/opt - To be used by Jenkins server in Project 8.
+18. Create mount points on /mnt directory for the logical volumes:
+
+    ```
+    sudo mkdir -p /mnt/apps /mnt/logs /mnt/opt
+    ```
+
+19. Mount Logical Volumes
+
+    ```
+    sudo mount /dev/webdata-vg/lv-apps /mnt/apps
+    sudo mount /dev/webdata-vg/lv-logs /mnt/logs
+    sudo mount /dev/webdata-vg/lv-opt /mnt/opt
+    ```
+
+20. Add Mount Points to /etc/fstab 
+
+    ```
+    sudo vi /etc/fstab
+    ```
+
+21. Add the following lines:
+
+    ```
+    /dev/webdata-vg/lv-apps /mnt/apps xfs defaults 0 0
+    /dev/webdata-vg/lv-logs /mnt/logs xfs defaults 0 0
+    /dev/webdata-vg/lv-opt /mnt/opt xfs defaults 0 0
+    ```
+
+22. Verify Mounts:
+
+    ```
+    sudo mount -a
+    ```
+
+23. Install NFS server, configure it to start on reboot and make sure it is u and running. Update the System and Install NFS Utilities:
+
+    ```
+    sudo yum -y update
+    sudo yum install nfs-utils -y
+    sudo systemctl start nfs-server.service
+    sudo systemctl enable nfs-server.service
+    sudo systemctl status nfs-server.service
+    ```
+
+24.            
+
+    
+
+     
+     
+                                                                        
+
+    
     
 
     
