@@ -83,8 +83,65 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo pvcreate /dev/xvdf1 /dev/xvdg1 /dev/xvdh1
     ```
 
-10.     
+10. Verify that your Physical volume has been created successfully
 
+    ```
+    sudo pvs
+    ```
+
+11. Use vgcreate utility to add all 3 PVs to a volume group (VG) Name the VG webdata-vg
+
+    ```
+    sudo vgcreate webdata-vg /dev/xvdf1 /dev/xvdg1 /dev/xvdh1
+    ```
+
+12. Verify that your VG has been created successfully
+
+    ```
+    sudo vgs
+    ```
+
+13. Create Logical Volumes Use lvcreate utility to create logical volumes
+
+    ```
+    sudo lvcreate -L 14G -n lv-apps webdata-vg
+    sudo lvcreate -L 14G -n lv-logs webdata-vg
+    sudo lvcreate -L 14G -n lv-opt  webdata-vg
+    ```
+
+14. Verify that our Logical Volume has been created successfully
+
+    ```
+    sudo lvs
+    ```
+        
+15. Verify the entire setup #view complete setup - VG , PV, and LV
+
+    ```
+    sudo vgdisplay -v
+    ```
+
+16. Format the disks as xfs instead ext4 you will have to format them as xfs. Ensure there are 3 Logical Volumes lv-opt lv-apps, and lv-logs
+
+    ```
+    sudo lsblk
+    ```
+
+17. Format the Logical Volumes as XFS:
+
+    ```
+    sudo mkfs.xfs /dev/webdata-vg/lv-apps
+    sudo mkfs.xfs /dev/webdata-vg/lv-logs
+    sudo mkfs.xfs /dev/webdata-vg/lv-opt
+    ```
+
+18. Create mount points on /mnt directory for the logical volumes as follows: Mount lv-apps on /mnt/apps - To be used by webservers Mount lv-logs on /mnt/logs - To be used by webserver logs Mount lv-opt on /mnt/opt - To be used by Jenkins server in Project 8.
+    
+
+    
+    
+
+      
 
 
 
