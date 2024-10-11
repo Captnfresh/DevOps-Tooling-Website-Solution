@@ -242,17 +242,20 @@ It is important to know what storage solution is suitable for what use cases, fo
 
 Create EC2 instance of t2.micro type with Ubuntu Server launch in the default region.
 
-1. Update the server:
+image 8
+
+1. Update and Upgrade the server:
 
    ```
    sudo apt update -y
+
+   sudo apt upgrade -y
    ```
 
 2. Install MySQL server:
 
    ```
    sudo apt install mysql-server
-
    ```
 3. Check status:
 
@@ -274,9 +277,96 @@ Create EC2 instance of t2.micro type with Ubuntu Server launch in the default re
    exit
    ```
 
+   image 9
+
+6. Update the bind-address in the /etc/mysql/mysql.conf.d/mysqld.cnf file to allow remote connections:
+
+   ```
+   sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+   ```
+
+     image 10
+
 ##  Step 3 - Prepare the webservers
 
-1. 
+1. Update machine:
+
+   ```
+   sudo yum update -y
+   ```
+
+2. Install NFS CLIENT:
+
+   ```
+   sudo yum install nfs-utils nfs4-acl-tools -y
+   ```
+
+3. Mount /var/www/ and target the NFS server's export for apps
+
+   ```
+   sudo mkdir /var/www
+   sudo mount -t nfs -o rw,nosuid <NFS-Server-Private-IP-Address>:/mnt/apps /var/www
+   ```
+
+4. Verify that NFS was mounted successfully
+
+   ```
+   df -h
+   ```  
+
+5. Make sure that the changes will persist on Web Server after reboot:
+
+   ```
+   sudo vi /etc/fstab
+   ```
+
+6. Add the following line:
+
+   ```
+   <NFS-Server-Private-IP-Address>:/mnt/apps /var/www nfs defaults 0 0
+   ```
+
+7. Install Remi's repository, Apache and PHP
+
+   ```
+   sudo yum install httpd -y
+   sudo systemctl enable httpd.service
+   sudo systemctl start httpd.service
+   sudo dnf install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+   sudo dnf install dnf-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+   sudo dnf module reset php
+   sudo dnf module enable php:remi-7.4
+   sudo dnf install php php-opcache php-gd php-curl php-mysqlnd
+   sudo systemctl start php-fpm
+   sudo systemctl enable php-fpm
+   setsebool -P httpd_execmem 1
+   ```
+
+8. Repeat steps 1-5 for another 2 Web Servers. Verify NFS Mount and Apache Setup: Verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files - it means NFS is mounted correctly. `cd /var/www`
+
+9. You can try to create a new file.
+
+    ```
+    sudo touch test.txt
+    ```
+    
+10. Fork the tooling source code from Darey.io Github Account to your Github account. Download git.
+
+    ```
+    sudo yum install git -y
+    git clone https://github.com/ksal1235/tooling.git
+    ```
+
+11. Clone the repository you forked the project into
+
+    ```
+    git clone https://github.com/ksal1235/tooling.git
+    ```
+        
+
+    
+
+
 
 
 
