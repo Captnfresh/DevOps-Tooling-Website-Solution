@@ -46,62 +46,69 @@ It is important to know what storage solution is suitable for what use cases, fo
    ```
    sudo yum update -y
    ```
+   image 3
+
    
-4. List the disk:
+5. List the disk:
 
    ```
    lsblk
    ```
 
-5. Use df -h command to see all mounts and free space:
+6. Use df -h command to see all mounts and free space:
 
    ```
    df -h
    ```
 
-6. Use gdisk utility to create a single partition on each of the 3 disks:
+7. Use gdisk utility to create a single partition on each of the 3 disks:
 
    ```
    sudo gdisk /dev/xvdf
    ```
+   image 4
 
-7. Install lvm2 package: creating logical volumes, which can be resized or moved without needing to unmount file systems.
 
-   ```
-   sudo yum install lvm2 -y
-   ```
+9. Install lvm2 package: creating logical volumes, which can be resized or moved without needing to unmount file systems.
 
-8. Check for available partitions.
+    ```
+    sudo yum install lvm2 -y
+    ```
 
-   ```
-   sudo lvmdiskscan
-   ```      
+10. Check for available partitions.
 
-9. Create Physical Volumes Use pvcreate utility to mark each of 3 disks as physical volumes (PVs) to be used by LVM
+    ```
+    sudo lvmdiskscan
+    ```
+    image 5
+
+
+
+11. Create Physical Volumes Use pvcreate utility to mark each of 3 disks as physical volumes (PVs) to be used by LVM
 
     ```
     sudo pvcreate /dev/xvdf1 /dev/xvdg1 /dev/xvdh1
     ```
 
-10. Verify that your Physical volume has been created successfully
+12. Verify that your Physical volume has been created successfully
 
     ```
     sudo pvs
     ```
 
-11. Use vgcreate utility to add all 3 PVs to a volume group (VG) Name the VG webdata-vg
+13. Use vgcreate utility to add all 3 PVs to a volume group (VG) Name the VG webdata-vg
 
     ```
     sudo vgcreate webdata-vg /dev/xvdf1 /dev/xvdg1 /dev/xvdh1
     ```
 
-12. Verify that your VG has been created successfully
+14. Verify that your VG has been created successfully
 
     ```
     sudo vgs
     ```
 
-13. Create Logical Volumes Use lvcreate utility to create logical volumes
+15. Create Logical Volumes Use lvcreate utility to create logical volumes
 
     ```
     sudo lvcreate -L 14G -n lv-apps webdata-vg
@@ -109,25 +116,27 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo lvcreate -L 14G -n lv-opt  webdata-vg
     ```
 
-14. Verify that our Logical Volume has been created successfully
+16. Verify that our Logical Volume has been created successfully
 
     ```
     sudo lvs
     ```
+
+    image 6
         
-15. Verify the entire setup #view complete setup - VG , PV, and LV
+17. Verify the entire setup #view complete setup - VG , PV, and LV
 
     ```
     sudo vgdisplay -v
     ```
 
-16. Format the disks as xfs instead ext4 you will have to format them as xfs. Ensure there are 3 Logical Volumes lv-opt lv-apps, and lv-logs
+18. Format the disks as xfs instead ext4 you will have to format them as xfs. Ensure there are 3 Logical Volumes lv-opt lv-apps, and lv-logs
 
     ```
     sudo lsblk
     ```
 
-17. Format the Logical Volumes as XFS:
+19. Format the Logical Volumes as XFS:
 
     ```
     sudo mkfs.xfs /dev/webdata-vg/lv-apps
@@ -135,13 +144,13 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo mkfs.xfs /dev/webdata-vg/lv-opt
     ```
 
-18. Create mount points on /mnt directory for the logical volumes:
+20. Create mount points on /mnt directory for the logical volumes:
 
     ```
     sudo mkdir -p /mnt/apps /mnt/logs /mnt/opt
     ```
 
-19. Mount Logical Volumes
+21. Mount Logical Volumes
 
     ```
     sudo mount /dev/webdata-vg/lv-apps /mnt/apps
@@ -149,13 +158,13 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo mount /dev/webdata-vg/lv-opt /mnt/opt
     ```
 
-20. Add Mount Points to /etc/fstab 
+22. Add Mount Points to /etc/fstab 
 
     ```
     sudo vi /etc/fstab
     ```
 
-21. Add the following lines:
+23. Add the following lines:
 
     ```
     /dev/webdata-vg/lv-apps /mnt/apps xfs defaults 0 0
@@ -163,13 +172,13 @@ It is important to know what storage solution is suitable for what use cases, fo
     /dev/webdata-vg/lv-opt /mnt/opt xfs defaults 0 0
     ```
 
-22. Verify Mounts:
+24. Verify Mounts:
 
     ```
     sudo mount -a
     ```
 
-23. Install NFS server, configure it to start on reboot and make sure it is u and running. Update the System and Install NFS Utilities:
+25. Install NFS server, configure it to start on reboot and make sure it is u and running. Update the System and Install NFS Utilities:
 
     ```
     sudo yum -y update
@@ -179,7 +188,119 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo systemctl status nfs-server.service
     ```
 
-24.            
+26.  Export the NFS Mounts Use subnet cidr to connect as clients. For simplicity, we will install our all three Web Servers inside the same subnet, but in production set up would probably want to separate each tier inside its own subnet for higher level of security. To check our subnet cidr - open our EC2 details in AWS web console and locate Networking tab and open a Subnet link:
+
+27. Set Permissions on Mount Points:
+
+    ```
+     sudo chown -R nobody:nobody /mnt/apps
+     sudo chown -R nobody:nobody /mnt/logs
+     sudo chown -R nobody:nobody /mnt/opt
+     sudo chmod -R 777 /mnt/apps
+     sudo chmod -R 777 /mnt/logs
+     sudo chmod -R 777 /mnt/opt
+    ```
+    
+28. Restart NFS Server
+    ```
+    sudo systemctl restart nfs-server.service
+    ```
+
+29. Configure access to NFS for clients within the same subnet (example of Subnet CIDR - 172.31.32.0/20 ):
+
+    ```
+    sudo vi /etc/exports
+    ```
+
+30. Add the following lines:
+
+    ```
+    /mnt/apps 172.31.32.0/20(rw,sync,no_all_squash,no_root_squash)
+    /mnt/logs 172.31.32.0/20(rw,sync,no_all_squash,no_root_squash)
+    /mnt/opt 172.31.32.0/20(rw,sync,no_all_squash,no_root_squash)
+    ```
+
+31. Export the NFS Shares:
+
+    ```
+    sudo exportfs -arv
+    ```
+
+
+32. Check which port is used by NFS and open necessary ports in Security Groups (add new Inbound Rule). Check NFS Ports:
+
+    ```
+    rpcinfo -p | grep nfs
+    ```
+
+    image 7
+    
+### Important note: In order for NFS server to be accessible from our client,we open following ports: TCP 111, UDP 111, UDP 2049.
+
+
+## Step 2 - Configure the database server
+
+Create EC2 instance of t2.micro type with Ubuntu Server launch in the default region.
+
+1. Update the server:
+
+   ```
+   sudo apt update -y
+   ```
+
+2. Install MySQL server:
+
+   ```
+   sudo apt install mysql-server
+
+   ```
+3. Check status:
+
+   ```
+   sudo systemctl status mysql
+   ```
+4. Enable MySQL to start on boot:
+
+   ```
+   sudo systemctl enable mysql
+   ```
+5. Create a database Tooling and User name it webaccess.
+
+   ```
+   sudo mysql
+   CREATE DATABASE tooling;
+   CREATE USER 'webaccess'@'%' IDENTIFIED BY 'mypass';
+   GRANT ALL PRIVILEGES ON tooling. * TO 'webaccess'@'%' WITH GRANT OPTION;
+   exit
+   ```
+
+##  Step 3 - Prepare the webservers
+
+1. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+
+
 
     
 
