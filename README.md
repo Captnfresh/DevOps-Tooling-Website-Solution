@@ -342,22 +342,24 @@ image 8
    setsebool -P httpd_execmem 1
    ```
 
-8. Repeat steps 1-5 for another 2 Web Servers. Verify NFS Mount and Apache Setup: Verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files - it means NFS is mounted correctly. `cd /var/www`
+8. Repeat steps 1-5 for another 2 Web Servers.
 
-9. You can try to create a new file.
+9. Verify that Apache files and directories are available on the Web Server in /var/www and also on the NFS server in /mnt/apps. If you see the same files - it means NFS is mounted correctly. `cd /var/www`
+
+10. You can try to create a new file.
 
     ```
     sudo touch test.txt
     ```
     
-10. Fork the tooling source code from Darey.io Github Account to your Github account. Download git.
+11. Fork the tooling source code from Darey.io Github Account to your Github account. Download git.
 
     ```
     sudo yum install git -y
     git clone https://github.com/ksal1235/tooling.git
     ```
 
-11. Clone the repository you forked the project into
+12. Clone the repository you forked the project into
 
     ```
     git clone https://github.com/ksal1235/tooling.git
