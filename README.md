@@ -30,7 +30,7 @@ The infrastructure will follow a three-tier architecture pattern with stateless 
 
 ## Architecture Diagram
 
-image 1
+   ![image 1](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%201.jpg)
 
 It is important to know what storage solution is suitable for what use cases, for this - we need to answer following questions: what data will be stored, in what format, how this data will be accessed, by whom, from where, how frequently, etc. Base on this you will be able to choose the right storage system for your solution.
 
@@ -39,14 +39,14 @@ It is important to know what storage solution is suitable for what use cases, fo
 1. Spin up a new EC2 instance with RHEL Linux 9 Operating System.
 2. Based on your LVM experience from Project 6, Configure LVM on the Server. Create 3 volumes in the same AZ as your Web Server EC2.
 
-   image 2
+   ![image 2](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%202.jpg)
 
 3. SSH into your instance and update your machine:
 
    ```
    sudo yum update -y
    ```
-   image 3
+   ![image 3](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%203.jpg)
 
    
 5. List the disk:
@@ -66,7 +66,7 @@ It is important to know what storage solution is suitable for what use cases, fo
    ```
    sudo gdisk /dev/xvdf
    ```
-   image 4
+   ![image 4](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%204.jpg)
 
 
 9. Install lvm2 package: creating logical volumes, which can be resized or moved without needing to unmount file systems.
@@ -80,7 +80,7 @@ It is important to know what storage solution is suitable for what use cases, fo
     ```
     sudo lvmdiskscan
     ```
-    image 5
+   ![image 5](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%205.jpg)
 
 
 
@@ -122,7 +122,7 @@ It is important to know what storage solution is suitable for what use cases, fo
     sudo lvs
     ```
 
-    image 6
+   ![image 6](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%206.jpg)
         
 17. Verify the entire setup #view complete setup - VG , PV, and LV
 
@@ -233,7 +233,7 @@ It is important to know what storage solution is suitable for what use cases, fo
     rpcinfo -p | grep nfs
     ```
 
-    image 7
+   ![image 7](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%207.jpg)
     
 ### Important note: In order for NFS server to be accessible from our client,we open following ports: TCP 111, UDP 111, UDP 2049.
 
@@ -242,7 +242,7 @@ It is important to know what storage solution is suitable for what use cases, fo
 
 Create EC2 instance of t2.micro type with Ubuntu Server launch in the default region.
 
-image 8
+   ![image 8](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%208.jpg)
 
 1. Update and Upgrade the server:
 
@@ -277,7 +277,7 @@ image 8
    exit
    ```
 
-   image 9
+   ![image 9](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%209.jpg)
 
 6. Update the bind-address in the /etc/mysql/mysql.conf.d/mysqld.cnf file to allow remote connections:
 
@@ -285,7 +285,7 @@ image 8
    sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
    ```
 
-     image 10
+   ![image 10](https://github.com/Captnfresh/DevOps-Tooling-Website-Solution/blob/main/DevOps%20Tooling%20Website/image%2010.jpg)
 
 ##  Step 3 - Prepare the webservers
 
@@ -352,7 +352,7 @@ image 8
     sudo touch test.txt
     ```
     
-11. Fork the tooling source code from Darey.io Github Account to your Github account. Download git.
+11. Fork the tooling source code from `Darey.io` Github Account to your Github account. Download git.
 
     ```
     sudo yum install git -y
