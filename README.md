@@ -356,17 +356,15 @@ image 8
 
     ```
     sudo yum install git -y
-    git clone https://github.com/ksal1235/tooling.git
     ```
 
 12. Clone the repository you forked the project into
 
     ```
-    git clone https://github.com/ksal1235/tooling.git
+    sudo git clone https://github.com/Captnfresh/DevOps-Tooling-Website-Solution.git
     ```
-        
 
-    
+13.  Open Website in Browser: Open the website using `http://<Web-Server-Public-IP-Address>/index.php` and ensure you can log in with the credentials you created.
 
 
 
