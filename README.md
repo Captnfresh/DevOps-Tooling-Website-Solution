@@ -13,7 +13,6 @@ You will implement a tooling website solution that provides easy access to DevOp
 5. Programming Language: PHP
 6. Code Repository: GitHub
 
-
 ## Architecture
 
 In this project, you will implement a tooling website solution that makes access to DevOps tools within the corporate infrastructure easily accessible.
